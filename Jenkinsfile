@@ -1,10 +1,7 @@
 pipeline {
     agent any
-    tools {
-        gradle 'gradle'
-    }
     triggers {
-        githubPush()     // automatic trigger
+        githubPush()
     }
     stages {
         stage('Checkout') {
@@ -14,12 +11,12 @@ pipeline {
         }
         stage('Build') {
             steps {
-                bat './gradlew build -x test'
+                bat 'gradlew.bat build -x test'
             }
         }
         stage('Test') {
             steps {
-                bat './gradlew test'
+                bat 'gradlew.bat test'
             }
             post {
                 always {
@@ -32,16 +29,15 @@ pipeline {
                 withSonarQubeEnv('sonarqube-server') {
                     withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
                         bat """
-                            ./gradlew sonarqube \
-                                -Dsonar.projectKey=Woody \
-                                -Dsonar.host.url=$SONAR_HOST_URL \
-                                -Dsonar.login=$SONAR_TOKEN
+                        gradlew.bat sonarqube ^
+                          -Dsonar.projectKey=Woody ^
+                          -Dsonar.host.url=%SONAR_HOST_URL% ^
+                          -Dsonar.login=%SONAR_TOKEN%
                         """
                     }
                 }
             }
         }
-
         stage('Quality Gate') {
             steps {
                 timeout(time: 5, unit: 'MINUTES') {
@@ -53,13 +49,12 @@ pipeline {
     post {
         always {
             cleanWs()
-            echo 'Pipeline completed - cleaning workspace'
         }
         success {
-            echo 'Build successful. Code completed all tests and quality gates.'
+            echo '✅ Build successful'
         }
         failure {
-            echo 'Build unsuccessful. Check quality gates or tests'
+            echo '❌ Build failed'
         }
     }
 }
