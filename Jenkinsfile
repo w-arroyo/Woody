@@ -14,12 +14,12 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh './gradlew build -x test'
+                bat './gradlew build -x test'
             }
         }
         stage('Test') {
             steps {
-                sh './gradlew test'
+                bat './gradlew test'
             }
             post {
                 always {
@@ -30,13 +30,21 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonarqube-server') {
-                    sh './gradlew sonarqube'
+                    withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                        bat """
+                            ./gradlew sonarqube \
+                                -Dsonar.projectKey=Woody \
+                                -Dsonar.host.url=$SONAR_HOST_URL \
+                                -Dsonar.login=$SONAR_TOKEN
+                        """
+                    }
                 }
             }
         }
+
         stage('Quality Gate') {
             steps {
-                timeout(time: 1, unit: 'HOURS') {
+                timeout(time: 5, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
                 }
             }
