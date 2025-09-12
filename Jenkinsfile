@@ -33,9 +33,10 @@ pipeline {
                     withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
                         bat """
                         gradle sonar ^
-                          -Dsonar.projectKey=Woody ^
-                          -Dsonar.host.url=http://192.168.1.50:9000 ^
-                          -Dsonar.login=%SONAR_TOKEN%
+                           -Dsonar.projectKey=w-arroyo_Woody ^
+                           -Dsonar.organization=w-arroyo ^
+                           -Dsonar.host.url=https://sonarcloud.io ^
+                           -Dsonar.login=%SONAR_TOKEN%
                         """
                     }
                 }
