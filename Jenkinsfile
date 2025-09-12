@@ -32,7 +32,7 @@ pipeline {
                 withSonarQubeEnv('sonarqube-server') {
                     withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
                         bat """
-                        gradle sonarqube ^
+                        gradle sonar ^
                           -Dsonar.projectKey=Woody ^
                           -Dsonar.host.url=%SONAR_HOST_URL% ^
                           -Dsonar.login=%SONAR_TOKEN%
