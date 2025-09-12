@@ -34,7 +34,7 @@ pipeline {
                         bat """
                         gradle sonar ^
                           -Dsonar.projectKey=Woody ^
-                          -Dsonar.host.url=%SONAR_HOST_URL% ^
+                          -Dsonar.host.url=http://192.168.1.50:9000 ^
                           -Dsonar.login=%SONAR_TOKEN%
                         """
                     }
