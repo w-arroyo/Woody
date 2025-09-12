@@ -12,13 +12,13 @@ pipeline {
 
         stage('Build') {
             steps {
-                bat 'gradlew.bat build -x test'
+                bat 'gradle build -x test'
             }
         }
 
         stage('Test') {
             steps {
-                bat 'gradlew.bat test'
+                bat 'gradle test'
             }
             post {
                 always {
@@ -32,7 +32,7 @@ pipeline {
                 withSonarQubeEnv('sonarqube-server') {
                     withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
                         bat """
-                        gradlew.bat sonarqube ^
+                        gradle sonarqube ^
                           -Dsonar.projectKey=Woody ^
                           -Dsonar.host.url=%SONAR_HOST_URL% ^
                           -Dsonar.login=%SONAR_TOKEN%
@@ -56,10 +56,10 @@ pipeline {
             echo 'Pipeline completed - cleaning workspace'
         }
         success {
-            echo 'Build successful'
+            echo 'Build successful.'
         }
         failure {
-            echo 'Build failed. Check tests or Quality Gates analysis'
+            echo 'Build failed. Check tests or Quality Gates analysis.'
         }
     }
 }
